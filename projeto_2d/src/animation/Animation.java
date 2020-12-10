@@ -1,11 +1,16 @@
 package animation;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.color.ColorSpace;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
@@ -13,15 +18,27 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorConvertOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
+
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 
-public class Animation extends JFrame{
+
+public class Animation extends JFrame implements ActionListener{
+	
 
 	
 	public static void main(String[] args) {
@@ -37,6 +54,68 @@ public class Animation extends JFrame{
 	frame.setVisible(true);
 
 	}
+	
+	public Animation() {
+		JMenuBar mb = new JMenuBar();
+		setJMenuBar(mb);
+		
+		JMenu menu = new JMenu("Opções");
+		JMenuItem mi = new JMenuItem("");
+		mi = new JMenuItem("Aumentar tempo");
+		mi.addActionListener(this);
+		menu.add(mi);
+		mi = new JMenuItem("Exit");
+		mi.addActionListener(this);
+		menu.add(mi);
+		mb.add(menu);
+		menu = new JMenu("Recordes");
+		mi = new JMenuItem("Ver Lista");
+		mi.addActionListener(this);
+		menu.add(mi);
+		mb.add(menu);
+	
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String menuitem = e.getActionCommand();
+		
+		if (menuitem.equals("Aumentar tempo")) {
+			//JOptionPane.showMessageDialog(this, menuitem);
+		}else if(menuitem.equals("Save image")){
+		}else if(menuitem.equals("Copy image")) {
+		}else if (menuitem.equals("Exit")) {
+			 System.exit(0);
+		}else {
+			recordes(menuitem);	
+		
+			}
+		
+		
+	}
+	private void recordes(String menuitem) {
+		BufferedImageOp op = null;
+		
+		if (menuitem.equals("Ver Lista")) {
+
+		}else if (menuitem.equals("RGB To Gray II")) {
+
+		}else if (menuitem.equals("Binarization")) {
+			pack();
+		}else if (menuitem.equals("Edge")) {
+			float[] data = {0f,-1f,0f,
+							-1f,4f,-1f,
+							0f,-1f,0f};
+			
+			Kernel k = new Kernel(3, 3, data);
+			op = new ConvolveOp(k);
+			pack();
+		}else if (menuitem.equals("Smooth")) {
+
+		}
+		
+	}
+	
 
 }
 class MyJPanel extends JPanel implements Runnable, KeyListener{
