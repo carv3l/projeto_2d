@@ -111,7 +111,7 @@ public void paintComponent(Graphics g) {
 	
 	RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	g2.setRenderingHints(rh);
-	g2.setStroke(new BasicStroke(3));
+	g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 	
 		
 	g2.drawLine(30, 20,getWidth()-20,20); //x
