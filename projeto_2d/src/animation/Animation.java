@@ -174,7 +174,7 @@ public void run() {
 	
 }
 
-
+//Update something
 public void update() {
 	
 	at.setToTranslation(deltaX, deltaY);
