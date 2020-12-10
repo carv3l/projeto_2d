@@ -196,7 +196,6 @@ public void update() {
 
 public void collision() {
 	
-	
 	int posx = (int)player_object.getBounds().getX();
 	int posy = (int)player_object.getBounds().getY();
 	
@@ -280,7 +279,6 @@ public Shape randomObj(int x,int y){
 	return obj2;
 	
 }
-
 
 
 public Shape playerobj(int positionx,int positiony,int size){
