@@ -1,6 +1,6 @@
 # projeto_2d
 
 
-##Strokes
+## Strokes
 
-###Basic Stroke
+### Basic Stroke
