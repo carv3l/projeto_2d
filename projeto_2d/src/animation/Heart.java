@@ -1,4 +1,4 @@
-package moveshape;
+package animation;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
