@@ -70,6 +70,9 @@ public class Animation extends JFrame implements ActionListener{
 		mi = new JMenuItem("Exit");
 		mi.addActionListener(this);
 		menu.add(mi);
+		mi = new JMenuItem("Heart Shape");
+		mi.addActionListener(this);
+		menu.add(mi);
 		mb.add(menu);
 		
 		menu = new JMenu("Aumentar Rapidez");
@@ -100,7 +103,10 @@ public class Animation extends JFrame implements ActionListener{
 
 		}else if(menuitem.equals("-20%")){
 			mypanel.updateTime(2);
-		}else if(menuitem.equals("Copy image")) {
+		}else if(menuitem.equals("Heart Shape")) {
+			
+			mypanel.changeObjShape();
+			
 		}else if (menuitem.equals("Exit")) {
 			 System.exit(0);
 		}else {
@@ -137,6 +143,7 @@ public class Animation extends JFrame implements ActionListener{
 }
 class MyJPanel extends JPanel implements Runnable, KeyListener{
 
+	public static int objtype = 1;
 	
 	float[] positions = {0};
 	int ball_size = 23;
@@ -146,12 +153,13 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 	int startx = 500;
 	int starty = 500;
 	Shape player_object = playerobj(startx,starty,ball_size);
-	Shape obj2 = randomObj(dimension,dimension);
+	Shape obj2 = randomObj(dimension,dimension,objtype);
 	Shape obj3 = null;
 	int deltaX, deltaY;
 	int actualX, actualY;
 	int score = 1;
 	
+
 	JLabel label_score = new JLabel();
 	JLabel label_time = new JLabel();
 	JLabel label_speed = new JLabel();
@@ -181,7 +189,7 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 		add(label_time);
 		add(label_speed);
 		label_time.setBounds(100,100,10,10);	
-		randomObj(dimension,dimension); //Generate random point
+		randomObj(dimension,dimension,objtype); //Generate random point
 	}
 	
 public void paintComponent(Graphics g) {
@@ -322,7 +330,7 @@ public void collision() {
 	if (player_object.intersects(obj2.getBounds().getMinX(),obj2.getBounds().getMinY(),10,10)) {
 		
 		
-		obj2 = randomObj(getWidth()-30,getHeight()-50);
+		obj2 = randomObj(getWidth()-30,getHeight()-50,objtype);
 		
 		//ball_size -=1;
 		//time -=20;
@@ -333,38 +341,72 @@ public void collision() {
 	repaint();
 	
 }
+public void changeObjShape() {
+		objtype = 0;
+}
 
-public Shape randomObj(int x,int y){
+
+public Shape randomObj(int x,int y,int objtype){
 	
 	int randpos = (int)(Math.random() * (3 - 0) + 0);
 	int randobj = (int)(Math.random() * (3 - 1) + 1);
-	if (randpos == 0) {
-		int randposX = (int)(Math.random() * (((x-30) - 50) + 10)) + 50;
-		int randposY = (int)(Math.random() * (((y-30) - 40) + 10)) + 40;
-		obj2 = new Ellipse2D.Float(randposX, randposY, 20,20 );
-	}if (randpos == 1) {
-		if (randobj == 1) 
-			obj2 = new Ellipse2D.Float(196, 248, 10,10 );
-		else
-			obj2 = new Ellipse2D.Float(196, 215, 10,10 );
-		
-	}if (randpos ==2) {
-		if(randobj == 1) {
-			float crossX = (int)(Math.random() * (((y-375) - 240) + 10)) + 240;
-	    obj2 = new Ellipse2D.Float(crossX,490,20,20);
-		}else {
-			float crossY = (int)(Math.random() * (((560) - 420) + 10)) + 420;
-			obj2 = new Ellipse2D.Float(322,crossY,20,20);
+	
+	if (objtype==1) {
+		if (randpos == 0) {
+			int randposX = (int)(Math.random() * (((x-30) - 50) + 10)) + 50;
+			int randposY = (int)(Math.random() * (((y-30) - 40) + 10)) + 40;
+			System.out.println("x: "+randposX+"y: "+randposY);
+			obj2 = new Ellipse2D.Float(randposX, randposY, 50,50 );
 			
-		}	
+		}if (randpos == 1) {
+			if (randobj == 1) 
+				obj2 = new Ellipse2D.Float(196, 248, 10,10 );
+			else
+				obj2 = new Ellipse2D.Float(196, 215, 10,10 );
+			
+		}if (randpos ==2) {
+			if(randobj == 1) {
+				float crossX = (int)(Math.random() * (((y-375) - 240) + 10)) + 240;
+		    obj2 = new Ellipse2D.Float(crossX,490,20,20);
+			}else {
+				float crossY = (int)(Math.random() * (((560) - 420) + 10)) + 420;
+				obj2 = new Ellipse2D.Float(322,crossY,20,20);
+				
+			}	
+			
+		}
 		
+		
+	}else {
+		obj2 = new Heart(1, 1, 5,5 );
+		if (randpos == 0) {
+			int randposX = (int)(Math.random() * (((x-30) - 50) + 10)) + 50;
+			int randposY = (int)(Math.random() * (((y-30) - 40) + 10)) + 40;
+			at.setToTranslation(randposX, randposY);
+		}if (randpos == 1) {
+			if (randobj == 1) 
+				at.setToTranslation(196, 248);
+			else
+				at.setToTranslation(196, 215);
+		}if (randpos ==2) {
+			if(randobj == 1) {
+				float crossX = (int)(Math.random() * (((y-375) - 240) + 10)) + 240;
+		    //obj2 = new Heart(crossX,490,20,20);
+		    at.setToTranslation(crossX,490);
+			}else {
+				float crossY = (int)(Math.random() * (((560) - 420) + 10)) + 420;
+				at.setToTranslation(322,crossY);
+				
+			}	
+			
+		}
+		obj2 = at.createTransformedShape(obj2);
 	}
-	
-
-	
 	return obj2;
 	
 }
+
+
 
 
 public Shape playerobj(int positionx,int positiony,int size){
@@ -372,14 +414,13 @@ public Shape playerobj(int positionx,int positiony,int size){
 	Shape object = null;
 	switch (type) {
 	case 1:
-		object = new Ellipse2D.Float(positionx,positiony , size+6,size+6);
+		object = new Ellipse2D.Float(positionx,positiony,size+6,size+6);
 		break;
 	case 2:
 		object = new Rectangle2D.Float(positionx,positiony,size-6,size-6);
 		break;
 	case 3:
 		object = new Triangle(positionx, positiony, size,1); //normal triangle
-		
 		break;
 	case 4:
 		object = new Triangle(positionx, positiony, size,2); //inverted triangle
