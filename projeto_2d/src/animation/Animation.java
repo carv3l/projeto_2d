@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.color.ColorSpace;
@@ -22,6 +23,7 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+//import java.sql.Time;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -37,6 +39,8 @@ import javax.swing.border.Border;
 
 
 
+
+
 public class Animation extends JFrame implements ActionListener{
 	
 
@@ -47,6 +51,8 @@ public class Animation extends JFrame implements ActionListener{
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	JPanel panel = new MyJPanel();
+	
+	
 	
 	frame.getContentPane().add(panel);
 	frame.setResizable(false);
@@ -61,12 +67,18 @@ public class Animation extends JFrame implements ActionListener{
 		
 		JMenu menu = new JMenu("Opções");
 		JMenuItem mi = new JMenuItem("");
-		mi = new JMenuItem("Aumentar tempo");
-		mi.addActionListener(this);
-		menu.add(mi);
 		mi = new JMenuItem("Exit");
 		mi.addActionListener(this);
 		menu.add(mi);
+		mb.add(menu);
+		
+		menu = new JMenu("Aumentar Rapidez");
+		mi = new JMenuItem("+20%");
+		mi.addActionListener(this);
+		menu.add(mi);
+		mi = new JMenuItem("-20%");
+		mi.addActionListener(this);
+		menu.add(mi);	
 		mb.add(menu);
 		menu = new JMenu("Recordes");
 		mi = new JMenuItem("Ver Lista");
@@ -80,9 +92,14 @@ public class Animation extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String menuitem = e.getActionCommand();
 		
-		if (menuitem.equals("Aumentar tempo")) {
-			//JOptionPane.showMessageDialog(this, menuitem);
-		}else if(menuitem.equals("Save image")){
+		MyJPanel mypanel = new MyJPanel();//Calling class
+		
+		if (menuitem.equals("+20%")) {
+			
+			mypanel.updateTime(1);
+
+		}else if(menuitem.equals("-20%")){
+			mypanel.updateTime(2);
 		}else if(menuitem.equals("Copy image")) {
 		}else if (menuitem.equals("Exit")) {
 			 System.exit(0);
@@ -122,7 +139,6 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 
 	
 	float[] positions = {0};
-	
 	int ball_size = 23;
 	int state = 0;
 	int type = 1;
@@ -134,28 +150,25 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 	Shape obj3 = null;
 	int deltaX, deltaY;
 	int actualX, actualY;
-	int time= 1200;
 	int score = 1;
+	
 	JLabel label_score = new JLabel();
 	JLabel label_time = new JLabel();
+	JLabel label_speed = new JLabel();
+	
 	int Triangle_Area = 70;
 	int Cross_area = 40;
 	long start = System.currentTimeMillis();
-	
-	
+	public static int time = 1200; //Speed of player global variable to be updated
 
-	Border border1 = BorderFactory.createLineBorder(Color.GREEN, 5);
-	Border border2 = BorderFactory.createLineBorder(Color.RED, 5);
+	Border border_label_score = BorderFactory.createLineBorder(Color.GREEN, 5);
+	Border border_label_time = BorderFactory.createLineBorder(Color.RED, 5);
+	Border border_label_speed = BorderFactory.createLineBorder(Color.ORANGE, 5);
 	
-	//float tax,tay,tbx,tby,tcx,tcy;
-	
-
-
 	AffineTransform at = new AffineTransform();
-	
-	
+
 	public MyJPanel () {
-		
+
 		setPreferredSize(new Dimension(dimension,dimension));
 		setFocusable(true);
 		Thread thread = new Thread(this);
@@ -163,26 +176,21 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 		addKeyListener(this);
 		
 		//label.setText("");
-	
-		
+
 		add(label_score);
 		add(label_time);
-		label_time.setBounds(100,100,10,10);
-	
-		
-		randomObj(dimension,dimension);
-
-
-	
-
-		
+		add(label_speed);
+		label_time.setBounds(100,100,10,10);	
+		randomObj(dimension,dimension); //Generate random point
 	}
 	
 public void paintComponent(Graphics g) {
-	label_time.setBorder(border2);
-	label_score.setBorder(border1);
+	label_speed.setBorder(border_label_speed);
+	label_time.setBorder(border_label_time);
+	label_score.setBorder(border_label_score);
 	label_score.setBounds(getWidth()-70,30,35,30);
 	label_time.setBounds(getWidth()-110,30,35,30);
+	label_speed.setBounds(getWidth()-165,30,50,30);
 	
 	super.paintComponent(g);
 	
@@ -197,33 +205,43 @@ public void paintComponent(Graphics g) {
 	g2.drawLine(30, getHeight()-20,30,20); //y
 	g2.drawLine(getWidth()-20, 20,getWidth()-20,getHeight()-20); //y-1
 	g2.drawLine(30, getHeight()-20,getWidth()-20,getHeight()-20);  //x-1
-	
-	
+
 	g2.draw(new Cross(312, 432, 50,Cross_area));
 	g2.draw(new TriangleArea(200, 200, Triangle_Area,ball_size));
-	
-	
+
 	player_object = at.createTransformedShape(player_object);
-
-
-	
 	g2.setColor(Color.RED);
 	g2.fill(player_object);
 	g2.setColor(Color.GREEN);
 	g2.fill(obj2);
-	
-
 }
 
+public void updateTime(int timeselector) {
+	int increase = 0;
+	System.out.println("Time in: "+ time);
+	if (timeselector == 1) { //+20%
+	
+			increase = (int) (time * 0.2);
+			time = time - increase;
+				
+	}else if (timeselector == 2) {
+		increase = (int) (time * 0.2);
+		time = time + increase;
+	}
+	
+
+
+}	
 
 public void run() {
 	
+
 	while (true) {	
 			
 		long end = System.currentTimeMillis();
 		
 		int elapsed_time = Math.round((end - start)/1000f);
-	
+		label_speed.setText(""+time);	
 		label_time.setText(""+elapsed_time);	
 		if (elapsed_time >= 60.0f) {		
 			JOptionPane.showMessageDialog(this, "Score: "+ score , "GAME OVER", 0);
@@ -240,7 +258,7 @@ public void run() {
 			System.exit(0);
 		}
 		
-	
+	//Speed
 		try {
 			Thread.sleep(time/60);
 			
@@ -253,6 +271,7 @@ public void run() {
 	
 }
 
+
 //Update something
 public void update() {
 	
@@ -262,14 +281,10 @@ public void update() {
 	int posx = (int)player_object.getBounds().getX();
 	int posy = (int)player_object.getBounds().getY();
 	
-	
 	playerobj(posx, posy, ball_size);
-	
 	deltaX = 0;
 	deltaY = 0;
-	
 	repaint();
-	
 }
 
 
@@ -311,18 +326,10 @@ public void collision() {
 		
 		//ball_size -=1;
 		//time -=20;
-		score +=30;
-		
-		
-		
-		
+		score +=30;			
 		label_score.setText(""+score);
-		
-		
 	}
-	
 	player_object = playerobj(posx,posy,ball_size);
-	
 	repaint();
 	
 }
@@ -680,7 +687,7 @@ public void CrossCollision(int x, int y , int size, int shapesize) {
 		
 		update();
 	}
-	value =0;
+	value = 0;
 	
 	repaint();
 	
