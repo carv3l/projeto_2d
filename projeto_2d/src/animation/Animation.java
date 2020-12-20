@@ -178,7 +178,7 @@ public class Animation extends JFrame implements ActionListener{
 	
 	}
 	
-
+}
 }
 class MyJPanel extends JPanel implements Runnable, KeyListener{
 
