@@ -81,6 +81,9 @@ public class Animation extends JFrame implements ActionListener{
 		menu.add(mi);
 		mi = new JMenuItem("-20%");
 		mi.addActionListener(this);
+		menu.add(mi);
+		mi = new JMenuItem("Reset");
+		mi.addActionListener(this);
 		menu.add(mi);	
 		mb.add(menu);
 		menu = new JMenu("Recordes");
@@ -103,6 +106,8 @@ public class Animation extends JFrame implements ActionListener{
 
 		}else if(menuitem.equals("-20%")){
 			mypanel.updateTime(2);
+		}else if(menuitem.equals("Reset")){
+			mypanel.updateTime(0);
 		}else if(menuitem.equals("Heart Shape")) {
 			
 			mypanel.changeObjShape();
@@ -228,13 +233,14 @@ public void updateTime(int timeselector) {
 	int increase = 0;
 	System.out.println("Time in: "+ time);
 	if (timeselector == 1) { //+20%
-	
 			increase = (int) (time * 0.2);
 			time = time - increase;
 				
 	}else if (timeselector == 2) {
 		increase = (int) (time * 0.2);
 		time = time + increase;
+	}else if (timeselector ==0) {
+		time = 1200;
 	}
 	
 
@@ -463,13 +469,11 @@ public void keyPressed(KeyEvent e) {
 
 
 public void TriangleCollision(float posx,float posy, int asize,int shapesize,int type) {
-	
-	
+
 	int plax = (int)player_object.getBounds().getX();
 	int play = (int)player_object.getBounds().getY();
 	
 		Point2D[] polyPoints = getPolypoints(plax, play,20,type); 
-//System.out.println(type);
 
 if (type ==1 || type == 2) {
 	if (player_object.intersects(posx-shapesize,posy,2*shapesize,asize)) {
@@ -480,9 +484,6 @@ if (type ==1 || type == 2) {
 		
 	}
 }
-
-
-
 			for (int i = 0; i < polyPoints.length - 1; i++) {
 				
 					Line2D Line1 = getLines(posx,posy,asize,shapesize,1);
@@ -529,10 +530,6 @@ if (type ==1 || type == 2) {
 			
 			}
 	
-	
-	
-
-
 
 public Line2D getLines(float x, float y, int size,int shapesize,int line) {
 										
@@ -611,9 +608,6 @@ public Point2D[] getPolypoints(float x, float y, float size,int type) {
 	return polypoints;
 	
 }
-
-
-
 
 public void CrossCollision(int x, int y , int size, int shapesize) {
 	
@@ -736,7 +730,6 @@ public void CrossCollision(int x, int y , int size, int shapesize) {
 	
 	
 }
-
 
 //Area dentro da cruz para testar 
 
