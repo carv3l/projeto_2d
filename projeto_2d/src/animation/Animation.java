@@ -130,14 +130,14 @@ public class Animation extends JFrame implements ActionListener{
 		}else if (menuitem.equals("Exit")) {
 			 System.exit(0);
 		}else {
-			recordes(menuitem);	
+			menuimprimir(menuitem);	
 		
 			}
 		
 	
 		
 	}
-	private void recordes(String menuitem) {
+	private void menuimprimir(String menuitem) {
 		Container cp = this.getContentPane();
 	    cp.setLayout(new BorderLayout());
 		BufferedImageOp op = null;
@@ -175,26 +175,7 @@ public class Animation extends JFrame implements ActionListener{
 			        ex.printStackTrace();
 			      }
 			    }
-			 
-			
-			
-
-		}else if (menuitem.equals("RGB To Gray II")) {
-
-		}else if (menuitem.equals("Binarization")) {
-			pack();
-		}else if (menuitem.equals("Edge")) {
-			float[] data = {0f,-1f,0f,
-							-1f,4f,-1f,
-							0f,-1f,0f};
-			
-			Kernel k = new Kernel(3, 3, data);
-			op = new ConvolveOp(k);
-			pack();
-		}else if (menuitem.equals("Smooth")) {
-
-		}
-		
+	
 	}
 	
 
