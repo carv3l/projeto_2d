@@ -1,14 +1,21 @@
 package animation;
+import java.awt.Robot;
+import java.awt.AWTException;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Panel;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,11 +26,11 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-//import java.sql.Time;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -37,15 +44,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-
-
-
+//import java.sql.Time;
+import java.awt.print.*;
 
 public class Animation extends JFrame implements ActionListener{
 	
 
 	
 	public static void main(String[] args) {
+		
 	JFrame frame = new Animation();
 	frame.setTitle("Animation");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,7 +68,14 @@ public class Animation extends JFrame implements ActionListener{
 
 	}
 	
+	  PrinterJob pj;
+	  MyJPanel painter;
+	  
+	
 	public Animation() {
+		Container cp = this.getContentPane();
+	    cp.setLayout(new BorderLayout());
+		
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
 		
@@ -86,18 +100,19 @@ public class Animation extends JFrame implements ActionListener{
 		mi.addActionListener(this);
 		menu.add(mi);	
 		mb.add(menu);
-		menu = new JMenu("Recordes");
-		mi = new JMenuItem("Ver Lista");
+		menu = new JMenu("Imprimir");
+		mi = new JMenuItem("Imprimir Gráfico");
 		mi.addActionListener(this);
 		menu.add(mi);
 		mb.add(menu);
+		
 	
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String menuitem = e.getActionCommand();
-		
+
 		MyJPanel mypanel = new MyJPanel();//Calling class
 		
 		if (menuitem.equals("+20%")) {
@@ -119,12 +134,50 @@ public class Animation extends JFrame implements ActionListener{
 		
 			}
 		
+	
 		
 	}
 	private void recordes(String menuitem) {
+		Container cp = this.getContentPane();
+	    cp.setLayout(new BorderLayout());
 		BufferedImageOp op = null;
 		
-		if (menuitem.equals("Ver Lista")) {
+		if (menuitem.equals("Imprimir Gráfico")) {
+			
+			pj = PrinterJob.getPrinterJob();
+		    pj.setPrintable(new Printable() {
+				//I
+		    	public int print(Graphics g, PageFormat pf, int pageIndex) {
+			        switch (pageIndex) {
+			        case 0:
+			      	  Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+			      	  BufferedImage capture;
+			      	  try {
+			      	  capture = new Robot().createScreenCapture(screenRect); //Screenshot para tratar como imagem
+			      	  
+			      	  g.drawImage(capture, 0, 0, capture.getWidth(), capture.getHeight(), null);
+			      } catch (AWTException e) {
+			  		// TODO Auto-generated catch block
+			  		e.printStackTrace();
+			  	}
+			          break;
+			        default:
+			          return NO_SUCH_PAGE;
+			      }
+			      return PAGE_EXISTS;
+			    }
+			});
+
+			 if (pj.printDialog()) {
+			      try {
+			        pj.print();
+			      } catch (PrinterException ex) {
+			        ex.printStackTrace();
+			      }
+			    }
+			 
+			
+			
 
 		}else if (menuitem.equals("RGB To Gray II")) {
 
@@ -179,9 +232,9 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 	Border border_label_speed = BorderFactory.createLineBorder(Color.ORANGE, 5);
 	
 	AffineTransform at = new AffineTransform();
+	
 
 	public MyJPanel () {
-
 		setPreferredSize(new Dimension(dimension,dimension));
 		setFocusable(true);
 		Thread thread = new Thread(this);
@@ -228,6 +281,7 @@ public void paintComponent(Graphics g) {
 	g2.setColor(Color.GREEN);
 	g2.fill(obj2);
 }
+
 
 public void updateTime(int timeselector) {
 	int increase = 0;
@@ -753,9 +807,6 @@ public int checkBoundaries(float a3x,float a3y, float ax, float ay, int size, in
 public void keyTyped(KeyEvent e) {
 	
 }
-
-
-
 
 @Override
 public void keyReleased(KeyEvent e) {
