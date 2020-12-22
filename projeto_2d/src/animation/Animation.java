@@ -67,10 +67,8 @@ public class Animation extends JFrame implements ActionListener{
 	frame.setVisible(true);
 
 	}
+	MyJPanel mypanel = new MyJPanel();//Calling class
 	
-	  PrinterJob pj;
-	  MyJPanel painter;
-	  
 	
 	public Animation() {
 		Container cp = this.getContentPane();
@@ -113,7 +111,7 @@ public class Animation extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String menuitem = e.getActionCommand();
 
-		MyJPanel mypanel = new MyJPanel();//Calling class
+
 		
 		if (menuitem.equals("+20%")) {
 			
@@ -143,39 +141,8 @@ public class Animation extends JFrame implements ActionListener{
 		BufferedImageOp op = null;
 		
 		if (menuitem.equals("Imprimir Gráfico")) {
-			
-			pj = PrinterJob.getPrinterJob();
-		    pj.setPrintable(new Printable() {
-				//I
-		    	public int print(Graphics g, PageFormat pf, int pageIndex) {
-			        switch (pageIndex) {
-			        case 0:
-			      	  Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-			      	  BufferedImage capture;
-			      	  try {
-			      	  capture = new Robot().createScreenCapture(screenRect); //Screenshot para tratar como imagem
-			      	  
-			      	  g.drawImage(capture, 0, 0, capture.getWidth(), capture.getHeight(), null);
-			      } catch (AWTException e) {
-			  		// TODO Auto-generated catch block
-			  		e.printStackTrace();
-			  	}
-			          break;
-			        default:
-			          return NO_SUCH_PAGE;
-			      }
-			      return PAGE_EXISTS;
-			    }
-			});
-
-			 if (pj.printDialog()) {
-			      try {
-			        pj.print();
-			      } catch (PrinterException ex) {
-			        ex.printStackTrace();
-			      }
-			    }
-	
+			mypanel.PrintGame();
+		
 	}
 	
 }
@@ -211,6 +178,12 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 	Border border_label_score = BorderFactory.createLineBorder(Color.GREEN, 5);
 	Border border_label_time = BorderFactory.createLineBorder(Color.RED, 5);
 	Border border_label_speed = BorderFactory.createLineBorder(Color.ORANGE, 5);
+	
+	Object[] options = {"Print","Ok"};
+	
+	 public static PrinterJob pj;
+	 public static MyJPanel painter;
+	  
 	
 	AffineTransform at = new AffineTransform();
 	
@@ -282,6 +255,45 @@ public void updateTime(int timeselector) {
 
 }	
 
+//Função para Imprimir
+public void PrintGame() {
+	
+	pj = PrinterJob.getPrinterJob();
+    pj.setPrintable(new Printable() {
+	    	public int print(Graphics g, PageFormat pf, int pageIndex) {
+	        switch (pageIndex) {
+	        case 0:
+	      	  Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+	      	  BufferedImage capture;
+	      	  try {
+	      	  capture = new Robot().createScreenCapture(screenRect); //Screenshot para tratar como imagem
+	      	  
+	      	  g.drawImage(capture, 0, 0, capture.getWidth(), capture.getHeight(), null);
+	      } catch (AWTException e) {
+	  		// TODO Auto-generated catch block
+	  		e.printStackTrace();
+	  	}
+	          break;
+	        default:
+	          return NO_SUCH_PAGE;
+	      }
+	      return PAGE_EXISTS;
+	    }
+	});
+
+	 if (pj.printDialog()) {
+	      try {
+	        pj.print();
+	      } catch (PrinterException ex) {
+	        ex.printStackTrace();
+	      }
+	    }
+	
+	
+}
+
+
+
 public void run() {
 	
 
@@ -292,9 +304,16 @@ public void run() {
 		int elapsed_time = Math.round((end - start)/1000f);
 		label_speed.setText(""+time);	
 		label_time.setText(""+elapsed_time);	
-		if (elapsed_time >= 60.0f) {		
-			JOptionPane.showMessageDialog(this, "Score: "+ score , "GAME OVER", 0);
-			System.exit(0);
+		if (elapsed_time >= 60.0f) {	
+			JPanel panel = new JPanel();
+	        panel.add(new JLabel("Enter number between 0 and 1000"));
+			int result = JOptionPane.showOptionDialog(panel,"Pontuação:"+  score,"GAME OVER",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null, options, options[1]);
+			if (result == JOptionPane.YES_OPTION){
+				PrintGame();
+	        }else {
+	        	System.exit(0);
+	        }
+			
 		}
 		
 		collision();
