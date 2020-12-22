@@ -11,6 +11,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -31,9 +32,11 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.awt.image.RescaleOp;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,6 +49,8 @@ import javax.swing.border.Border;
 
 //import java.sql.Time;
 import java.awt.print.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Animation extends JFrame implements ActionListener{
 	
@@ -127,23 +132,20 @@ public class Animation extends JFrame implements ActionListener{
 			
 		}else if (menuitem.equals("Exit")) {
 			 System.exit(0);
-		}else {
-			menuimprimir(menuitem);	
-		
-			}
+		}else if (menuitem.equals("Imprimir Gráfico")) {
+
+			//mypanel.PrintGame();
+		mypanel.PrintGame1(this);
+	}
 		
 	
 		
 	}
 	private void menuimprimir(String menuitem) {
-		Container cp = this.getContentPane();
-	    cp.setLayout(new BorderLayout());
+
 		BufferedImageOp op = null;
 		
-		if (menuitem.equals("Imprimir Gráfico")) {
-			mypanel.PrintGame();
 		
-	}
 	
 }
 }
@@ -264,7 +266,8 @@ public void PrintGame() {
 	        switch (pageIndex) {
 	        case 0:
 	      	  Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-	      	  BufferedImage capture;
+	      	  BufferedImage capture = new BufferedImage(800, 800, BufferedImage.TYPE_INT_RGB); ;
+
 	      	  try {
 	      	  capture = new Robot().createScreenCapture(screenRect); //Screenshot para tratar como imagem
 	      	  
@@ -274,6 +277,10 @@ public void PrintGame() {
 	  		e.printStackTrace();
 	  	}
 	          break;
+	        case 1:
+	        	
+	        	
+	        	break;
 	        default:
 	          return NO_SUCH_PAGE;
 	      }
@@ -292,7 +299,44 @@ public void PrintGame() {
 	
 }
 
+public void PrintGame1(Component component) {
+	pj = PrinterJob.getPrinterJob();
+    pj.setPrintable(new Printable() {
+	    	public int print(Graphics g, PageFormat pf, int pageIndex) {
+	        switch (pageIndex) {
+	        case 0:
+	      	  //Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());   //Todo o ecrã
+	          Rectangle rect = component.getBounds();
+	      	  BufferedImage capture = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+	      	  try {
+	      	  capture = new Robot().createScreenCapture(rect); //Screenshot para tratar como imagem
+	      	  g.drawImage(capture, 0, 0, (int)pf.getImageableWidth(), (int)pf.getImageableHeight(), null);
+	      } catch (AWTException e) {
+	  		// TODO Auto-generated catch block
+	  		e.printStackTrace();
+	  	}
+	          break;
+	        case 1:
+	        	
+	        	
+	        	break;
+	        default:
+	          return NO_SUCH_PAGE;
+	      }
+	      return PAGE_EXISTS;
+	    }
+	});
 
+	 if (pj.printDialog()) {
+	      try {
+	        pj.print();
+	      } catch (PrinterException ex) {
+	        ex.printStackTrace();
+	      }
+	    }
+	
+	
+}
 
 public void run() {
 	
