@@ -263,7 +263,7 @@ public void updateTime(int timeselector) {
 
 }	
 
-//Beta Testing... V1
+//Fazer um screenshot para posteriormente ser tratado e impresso
 public BufferedImage CaptureImage(Component component) {
 	 Rectangle rect = component.getBounds();
  	  BufferedImage capture = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
@@ -278,7 +278,7 @@ public BufferedImage CaptureImage(Component component) {
 	
 }
 
-//Função para Imprimir V2 Solução pretendida
+//Função para Imprimir ScreenShot V2 Solução pretendida
 public void PrintGame1(Component component) {
 	pj = PrinterJob.getPrinterJob();
     pj.setPrintable(new Printable() {
@@ -319,6 +319,7 @@ public void PrintGame1(Component component) {
 	
 }
 
+//Imprime depois do screenshot ser tratado
 public void PrintGame2(BufferedImage bi) {
 	pj = PrinterJob.getPrinterJob();
     pj.setPrintable(new Printable() {
@@ -406,67 +407,7 @@ public void PrintProcessing(Component component) {
     frameProcessing.setVisible(true);
 
 }
-public void PrintProcessing1(Component component) {
-	BufferedImage original_screenshot;
-	JPanel cards = null;
-	JPanel ImageCard = new JPanel();
-	JPanel ButtonCard = new JPanel();
-	frameProcessing.pack();
-	
-	frameProcessing.setPreferredSize(new Dimension(1200, 900));
-	frameProcessing.setFocusable(true);
 
-	imageSrc = new ImagePanel();
-	
-	ImageCard.add(imageSrc);
-	
-	ButtonCard.add(button1);
-	ButtonCard.add(button2);
-	ButtonCard.add(button3);
-	ButtonCard.add(button4);
-	ButtonCard.add(button5);
-	ButtonCard.add(button6);
-	ButtonCard.add(button7);
-
-	cards = new JPanel(new FlowLayout());
-	cards.add(ButtonCard);
-    cards.add(ImageCard);
-    
-    original_screenshot = CaptureImage(component);
-   // imageSrc.setImage(original_screenshot);
-   
-	
-		button1.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  Operations(1);}});
-		button2.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  Operations(2);}});
-		button3.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  Operations(3);}});
-		button4.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  Operations(4);}});
-		button5.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  Operations(5);}});
-		button6.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) {
-				  imageSrc.setImage(original_screenshot);
-				}});
-		button7.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) {
-				  PrintGame2(imageSrc.getImage());
-				}});
-		//button2.addActionListener(this);
-		
-    //panelprocessing.add(new JLabel("Enter number between 0 and 1000"));
-	frameProcessing.add(cards);
-    frameProcessing.pack();
-    frameProcessing.setVisible(true);
-
-}
 
 private void Operations(int opt) {
 	BufferedImageOp op = null;
@@ -513,9 +454,10 @@ public void run() {
 			int result = JOptionPane.showOptionDialog(panel,"Pontuação:"+  score,"GAME OVER",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null, options, options[1]);
 			if (result == JOptionPane.YES_OPTION){
 			loopstate = false;
-			JOptionPane.getRootFrame().setVisible(false);
 			PrintProcessing(this);
-			JOptionPane.getRootFrame().setVisible(true);
+			//JOptionPane.getRootFrame().setVisible(false);
+			
+			//JOptionPane.getRootFrame().setVisible(true);
 	        }else {
 	        	System.exit(0);
 	        }
