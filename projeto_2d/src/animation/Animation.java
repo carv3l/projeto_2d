@@ -3,6 +3,7 @@ import java.awt.Robot;
 import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -27,6 +28,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
@@ -36,6 +38,7 @@ import java.awt.image.RescaleOp;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -135,19 +138,17 @@ public class Animation extends JFrame implements ActionListener{
 		}else if (menuitem.equals("Imprimir Gráfico")) {
 
 			//mypanel.PrintGame();
-		mypanel.PrintGame1(this);
-	}
+		//mypanel.PrintGame1(this);
+			mypanel.PrintProcessing(this);
+		}else {
+			
+			//MyJPanel(menuitem);
+		}
 		
 	
 		
 	}
-	private void menuimprimir(String menuitem) {
-
-		BufferedImageOp op = null;
-		
-		
 	
-}
 }
 class MyJPanel extends JPanel implements Runnable, KeyListener{
 
@@ -155,6 +156,7 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 	
 	float[] positions = {0};
 	int ball_size = 23;
+	public static int randomObj_size = 10;
 	int state = 0;
 	int type = 1;
 	int dimension = 800;
@@ -183,11 +185,15 @@ class MyJPanel extends JPanel implements Runnable, KeyListener{
 	
 	Object[] options = {"Print","Ok"};
 	
+	ImagePanel imageSrc = new ImagePanel();
+	
 	 public static PrinterJob pj;
 	 public static MyJPanel painter;
 	  
 	
 	AffineTransform at = new AffineTransform();
+	
+	JFrame frameProcessing = new JFrame();
 	
 
 	public MyJPanel () {
@@ -257,48 +263,22 @@ public void updateTime(int timeselector) {
 
 }	
 
-//Função para Imprimir
-public void PrintGame() {
-	
-	pj = PrinterJob.getPrinterJob();
-    pj.setPrintable(new Printable() {
-	    	public int print(Graphics g, PageFormat pf, int pageIndex) {
-	        switch (pageIndex) {
-	        case 0:
-	      	  Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-	      	  BufferedImage capture = new BufferedImage(800, 800, BufferedImage.TYPE_INT_RGB); ;
-
-	      	  try {
-	      	  capture = new Robot().createScreenCapture(screenRect); //Screenshot para tratar como imagem
-	      	  
-	      	  g.drawImage(capture, 0, 0, capture.getWidth(), capture.getHeight(), null);
-	      } catch (AWTException e) {
-	  		// TODO Auto-generated catch block
-	  		e.printStackTrace();
-	  	}
-	          break;
-	        case 1:
-	        	
-	        	
-	        	break;
-	        default:
-	          return NO_SUCH_PAGE;
-	      }
-	      return PAGE_EXISTS;
-	    }
-	});
-
-	 if (pj.printDialog()) {
-	      try {
-	        pj.print();
-	      } catch (PrinterException ex) {
-	        ex.printStackTrace();
-	      }
-	    }
-	
+//Beta Testing... V1
+public BufferedImage CaptureImage(Component component) {
+	 Rectangle rect = component.getBounds();
+ 	  BufferedImage capture = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+ 	  try {
+ 	  capture = new Robot().createScreenCapture(rect); //Screenshot para tratar como imagem
+ 	//  g.drawImage(capture, 0, 0, (int)pf.getImageableWidth(), (int)pf.getImageableHeight(), null);
+ } catch (AWTException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return capture;
 	
 }
 
+//Função para Imprimir V2 Solução pretendida
 public void PrintGame1(Component component) {
 	pj = PrinterJob.getPrinterJob();
     pj.setPrintable(new Printable() {
@@ -310,15 +290,16 @@ public void PrintGame1(Component component) {
 	      	  BufferedImage capture = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
 	      	  try {
 	      	  capture = new Robot().createScreenCapture(rect); //Screenshot para tratar como imagem
-	      	  g.drawImage(capture, 0, 0, (int)pf.getImageableWidth(), (int)pf.getImageableHeight(), null);
+	      	
+	      	  imageSrc.setImage(capture);
+	      
+	      	//  g.drawImage(capture, 0, 0, (int)pf.getImageableWidth(), (int)pf.getImageableHeight(), null);
 	      } catch (AWTException e) {
 	  		// TODO Auto-generated catch block
 	  		e.printStackTrace();
 	  	}
 	          break;
-	        case 1:
-	        	
-	        	
+	        case 1:    	
 	        	break;
 	        default:
 	          return NO_SUCH_PAGE;
@@ -338,10 +319,188 @@ public void PrintGame1(Component component) {
 	
 }
 
-public void run() {
-	
+public void PrintGame2(BufferedImage bi) {
+	pj = PrinterJob.getPrinterJob();
+    pj.setPrintable(new Printable() {
+	    	public int print(Graphics g, PageFormat pf, int pageIndex) {
+	        switch (pageIndex) {
+	        case 0:
+	      	g.drawImage(bi, 0, 0, (int)pf.getImageableWidth(), (int)pf.getImageableHeight(), null);
+	          break;
+	        case 1:    	
+	        	break;
+	        default:
+	          return NO_SUCH_PAGE;
+	      }
+	      return PAGE_EXISTS;
+	    }
+	});
 
-	while (true) {	
+	 if (pj.printDialog()) {
+	      try {
+	        pj.print();
+	      } catch (PrinterException ex) {
+	        ex.printStackTrace();
+	      }
+	      frameProcessing.dispose();
+	    }
+	
+	
+}
+
+
+JButton button1 = new JButton("Smooth");
+JButton button2 = new JButton("Sharpen");
+JButton button3 = new JButton("Edge");
+JButton button4 = new JButton("Rescale");
+JButton button5 = new JButton("Gray scale");
+JButton button6 = new JButton("Reset");
+JButton button7 = new JButton("Print");
+
+public void PrintProcessing(Component component) {
+	BufferedImage original_screenshot;
+	frameProcessing.setPreferredSize(new Dimension(1400, 900));
+	frameProcessing.setFocusable(true);
+	
+	
+	Container cp = frameProcessing.getContentPane();
+    cp.setLayout(new FlowLayout());
+	cp.add(imageSrc);
+	cp.add(button1);
+	cp.add(button2);
+	cp.add(button3);
+	cp.add(button4);
+	cp.add(button5);
+	cp.add(button6);
+	cp.add(button7);
+
+    original_screenshot = CaptureImage(component);
+    imageSrc.setImage(original_screenshot);
+   
+	
+		button1.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(1);}});
+		button2.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(2);}});
+		button3.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(3);}});
+		button4.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(4);}});
+		button5.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(5);}});
+		button6.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) {
+				  imageSrc.setImage(original_screenshot);
+				}});
+		button7.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) {
+				  PrintGame2(imageSrc.getImage());
+				}});
+
+    frameProcessing.pack();
+    frameProcessing.setVisible(true);
+
+}
+public void PrintProcessing1(Component component) {
+	BufferedImage original_screenshot;
+	JPanel cards = null;
+	JPanel ImageCard = new JPanel();
+	JPanel ButtonCard = new JPanel();
+	frameProcessing.pack();
+	
+	frameProcessing.setPreferredSize(new Dimension(1200, 900));
+	frameProcessing.setFocusable(true);
+
+	imageSrc = new ImagePanel();
+	
+	ImageCard.add(imageSrc);
+	
+	ButtonCard.add(button1);
+	ButtonCard.add(button2);
+	ButtonCard.add(button3);
+	ButtonCard.add(button4);
+	ButtonCard.add(button5);
+	ButtonCard.add(button6);
+	ButtonCard.add(button7);
+
+	cards = new JPanel(new FlowLayout());
+	cards.add(ButtonCard);
+    cards.add(ImageCard);
+    
+    original_screenshot = CaptureImage(component);
+   // imageSrc.setImage(original_screenshot);
+   
+	
+		button1.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(1);}});
+		button2.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(2);}});
+		button3.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(3);}});
+		button4.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(4);}});
+		button5.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  Operations(5);}});
+		button6.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) {
+				  imageSrc.setImage(original_screenshot);
+				}});
+		button7.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) {
+				  PrintGame2(imageSrc.getImage());
+				}});
+		//button2.addActionListener(this);
+		
+    //panelprocessing.add(new JLabel("Enter number between 0 and 1000"));
+	frameProcessing.add(cards);
+    frameProcessing.pack();
+    frameProcessing.setVisible(true);
+
+}
+
+private void Operations(int opt) {
+	BufferedImageOp op = null;
+	 if (opt==1) {
+	      float[] data = new float[9];
+	      for (int i = 0; i < 9; i++) data[i] = 1.0f/9.0f;
+	      Kernel ker = new Kernel(3,3,data);
+	      op = new ConvolveOp(ker);
+	    } else if (opt==2) {
+	      float[] data = {0f, -1f, 0f, -1f, 5f, -1f, 0f, -1f, 0f};
+	      Kernel ker = new Kernel(3,3,data);
+	      op = new ConvolveOp(ker);
+	    } else if (opt==3) {
+	      float[] data = {0f, -1f, 0f, -1f, 4f, -1f, 0f, -1f, 0f};
+	      Kernel ker = new Kernel(3,3,data);
+	      op = new ConvolveOp(ker);
+	    } else if (opt==4) {
+	      op = new RescaleOp(1.5f, 0.0f, null);
+	    } else if (opt==5) {
+	      op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+	    }
+	    BufferedImage bi = op.filter(imageSrc.getImage(), null);
+	    imageSrc.setImage(bi);
+	    frameProcessing.pack();
+	
+}
+
+Boolean loopstate = true;
+
+
+public void run() {
+		
+
+	while (loopstate) {	
 			
 		long end = System.currentTimeMillis();
 		
@@ -353,7 +512,10 @@ public void run() {
 	        panel.add(new JLabel("Enter number between 0 and 1000"));
 			int result = JOptionPane.showOptionDialog(panel,"Pontuação:"+  score,"GAME OVER",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null, options, options[1]);
 			if (result == JOptionPane.YES_OPTION){
-				PrintGame();
+			loopstate = false;
+			JOptionPane.getRootFrame().setVisible(false);
+			PrintProcessing(this);
+			JOptionPane.getRootFrame().setVisible(true);
 	        }else {
 	        	System.exit(0);
 	        }
@@ -460,21 +622,21 @@ public Shape randomObj(int x,int y,int objtype){
 			int randposX = (int)(Math.random() * (((x-30) - 50) + 10)) + 50;
 			int randposY = (int)(Math.random() * (((y-30) - 40) + 10)) + 40;
 			System.out.println("x: "+randposX+"y: "+randposY);
-			obj2 = new Ellipse2D.Float(randposX, randposY, 50,50 );
+			obj2 = new Ellipse2D.Float(randposX, randposY, randomObj_size,randomObj_size );
 			
 		}if (randpos == 1) {
 			if (randobj == 1) 
-				obj2 = new Ellipse2D.Float(196, 248, 10,10 );
+				obj2 = new Ellipse2D.Float(196, 248, randomObj_size,randomObj_size );
 			else
-				obj2 = new Ellipse2D.Float(196, 215, 10,10 );
+				obj2 = new Ellipse2D.Float(196, 215, randomObj_size,randomObj_size );
 			
 		}if (randpos ==2) {
 			if(randobj == 1) {
 				float crossX = (int)(Math.random() * (((y-375) - 240) + 10)) + 240;
-		    obj2 = new Ellipse2D.Float(crossX,490,20,20);
+		    obj2 = new Ellipse2D.Float(crossX,490,randomObj_size,randomObj_size);
 			}else {
 				float crossY = (int)(Math.random() * (((560) - 420) + 10)) + 420;
-				obj2 = new Ellipse2D.Float(322,crossY,20,20);
+				obj2 = new Ellipse2D.Float(322,crossY,randomObj_size,randomObj_size);
 				
 			}	
 			
@@ -859,3 +1021,35 @@ public void keyReleased(KeyEvent e) {
 }
 
 }
+
+class ImagePanel extends JPanel {
+	  BufferedImage image = null;
+
+	  public ImagePanel() {
+	    image = null;
+	    setPreferredSize(new Dimension(256, 256));
+	  }
+
+	  public ImagePanel(BufferedImage bi) {
+	    image = bi;
+	  }
+
+	  public void paintComponent(Graphics g) {
+	    Graphics2D g2 = (Graphics2D)g;
+	    if (image != null)
+	      g2.drawImage(image, 0, 0, this);
+	    else
+	      g2.drawRect(0, 0, getWidth()-1, getHeight()-1);
+	  }
+
+	  public BufferedImage getImage() {
+	    return image;
+	  }
+
+	  public void setImage(BufferedImage bi) {
+	    image = bi;
+	    setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
+	    invalidate();
+	    repaint();
+	  }
+	}
